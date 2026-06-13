@@ -21,6 +21,7 @@ interface CacheEntry {
 
 const compsCache = new Map<string, CacheEntry>();
 const CACHE_TTL_MS = 1000 * 60 * 5; // 5 minutes
+const MAX_CACHE_SIZE = 100; // Spatial boundary against OOM leaks
 
 export const clearCache = (): void => compsCache.clear();
 
@@ -33,11 +34,18 @@ export async function fetchComparables(category?: string): Promise<Comparable[]>
     return cached.data;
   }
 
+  // Mimic network latency
   await new Promise((resolve) => setTimeout(resolve, 300));
   
   const results = category ? SEED_COMPS.filter(c => c.category === category) : SEED_COMPS;
   const finalResults = results.length > 0 ? results : SEED_COMPS; // Fallback
   
+  // Evict oldest if we hit the ceiling (FIFO strategy)
+  if (compsCache.size >= MAX_CACHE_SIZE && !compsCache.has(cacheKey)) {
+    const oldestKey = compsCache.keys().next().value;
+    if (oldestKey) compsCache.delete(oldestKey);
+  }
+
   compsCache.set(cacheKey, { data: finalResults, expiresAt: now + CACHE_TTL_MS });
   return finalResults;
 }
