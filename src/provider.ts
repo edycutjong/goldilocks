@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { runProvider } from '@edycutjong/croo-core';
-import type { Client, Order, Deliverable } from '@edycutjong/croo-core';
+import type { Deliverable } from '@edycutjong/croo-core';
 import { fetchComparables } from './agentStore.js';
 import { calculatePriceBand } from './band.js';
 import { calculateDemand } from './demand.js';
@@ -16,6 +16,8 @@ export const GoldilocksInputSchema = z.object({
 
 export type GoldilocksInput = z.infer<typeof GoldilocksInputSchema>;
 
+type CrooOrder = { id: string; requirement: unknown };
+
 // 2. Idempotency Cache (Spatial bounded) to prevent double-billing on WS reconnects
 const processedOrders = new Set<string>();
 const MAX_IDEMPOTENCY_KEYS = 500;
@@ -28,7 +30,8 @@ export async function startGoldilocksProvider(client: unknown, serviceId: string
       console.log(`[Goldilocks] Negotiation requested. Approving for 0.05 USDC.`);
       return true;
     },
-    work: async (order: Order): Promise<Deliverable<unknown>> => {
+    work: async (rawOrder: unknown): Promise<Deliverable<unknown>> => {
+      const order = rawOrder as CrooOrder;
       // Idempotency Check
       if (processedOrders.has(order.id)) {
         console.warn(`[Goldilocks] ⚠️ Idempotency hit: Order ${order.id} already processed. Ignoring replay.`);
