@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { runProvider } from '@edycutjong/croo-core';
 import type { Deliverable } from '@edycutjong/croo-core';
-import { fetchComparables } from './agentStore.js';
-import { calculatePriceBand } from './band.js';
-import { calculateDemand } from './demand.js';
-import { generateRationale } from './rationale.js';
+import { fetchComparables } from './agentStore';
+import { calculatePriceBand } from './band';
+import { calculateDemand } from './demand';
+import { generateRationale } from './rationale';
 
 // 1. Defend against memory exhaustion with strict payload limits
 export const GoldilocksInputSchema = z.object({
@@ -16,6 +16,7 @@ export const GoldilocksInputSchema = z.object({
 
 export type GoldilocksInput = z.infer<typeof GoldilocksInputSchema>;
 
+type CrooEvent = { service_id?: string; buyerId?: string };
 type CrooOrder = { id: string; requirement: unknown };
 
 // 2. Idempotency Cache (Spatial bounded) to prevent double-billing on WS reconnects
@@ -25,13 +26,15 @@ const MAX_IDEMPOTENCY_KEYS = 500;
 export async function startGoldilocksProvider(client: unknown, serviceId: string): Promise<unknown> {
   // @ts-expect-error - external SDK type mismatch
   return runProvider(client, {
-    serviceMatch: (event: Record<string, unknown>) => {
-      if (event?.service_id !== serviceId) return false;
+    serviceMatch: (event: unknown) => {
+      const e = event as CrooEvent;
+      if (e?.service_id !== serviceId) return false;
       console.log(`[Goldilocks] Negotiation requested. Approving for 0.05 USDC.`);
       return true;
     },
     work: async (rawOrder: unknown): Promise<Deliverable<unknown>> => {
       const order = rawOrder as CrooOrder;
+      
       // Idempotency Check
       if (processedOrders.has(order.id)) {
         console.warn(`[Goldilocks] ⚠️ Idempotency hit: Order ${order.id} already processed. Ignoring replay.`);
