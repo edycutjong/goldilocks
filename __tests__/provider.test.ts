@@ -36,7 +36,7 @@ describe('Goldilocks Provider', () => {
     await expect(handlers.work({
       id: 'o1',
       requirement: { description: 'test' },
-    } as any)).rejects.toThrow('Invalid input: currentPrice is required');
+    } as any)).rejects.toThrow('Invalid input payload');
   });
 
   it('delivers the order successfully for the demo overpriced scenario', async () => {

@@ -14,22 +14,30 @@ const SEED_COMPS: Comparable[] = [
   { service: "Summary Bot", price: 0.25, category: "research" }
 ];
 
-/**
- * Fetches comparable listings from the public Agent Store.
- * In a real environment, this would call agent.croo.network via REST.
- * For the hackathon, we use deterministically seeded comparables to ensure the demo is reproducible.
- */
+interface CacheEntry {
+  data: Comparable[];
+  expiresAt: number;
+}
+
+const compsCache = new Map<string, CacheEntry>();
+const CACHE_TTL_MS = 1000 * 60 * 5; // 5 minutes
+
+export const clearCache = (): void => compsCache.clear();
+
 export async function fetchComparables(category?: string): Promise<Comparable[]> {
-  // Simulate network latency
+  const cacheKey = category || 'all_categories';
+  const now = Date.now();
+  const cached = compsCache.get(cacheKey);
+
+  if (cached && cached.expiresAt > now) {
+    return cached.data;
+  }
+
   await new Promise((resolve) => setTimeout(resolve, 300));
   
-  if (category) {
-    // If a category is requested, ideally we'd filter, but for the deterministic demo 
-    // the median needs to land at 0.40 across the whole array or a specific subset.
-    // Let's just return the seeded array. In a real system, we'd filter:
-    // return SEED_COMPS.filter(c => c.category === category);
-    return SEED_COMPS;
-  }
+  const results = category ? SEED_COMPS.filter(c => c.category === category) : SEED_COMPS;
+  const finalResults = results.length > 0 ? results : SEED_COMPS; // Fallback
   
-  return SEED_COMPS;
+  compsCache.set(cacheKey, { data: finalResults, expiresAt: now + CACHE_TTL_MS });
+  return finalResults;
 }

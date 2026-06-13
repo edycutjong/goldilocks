@@ -11,7 +11,7 @@ describe('fetchComparables', () => {
 
   it('should return seed comparables even when category is provided (deterministic demo)', async () => {
     const comps = await fetchComparables('verification');
-    expect(comps.length).toBe(7);
+    expect(comps.length).toBe(2);
     
     // Check specific seed data
     const specificComp = comps.find(c => c.service === 'Output Grading');

@@ -1,7 +1,7 @@
 {
   "name": "dorahacks-croo-goldilocks",
   "version": "0.1.0",
-  "description": "Paid pricing-oracle agent \u2014 surveys Agent Store listings, estimates demand, and recommends a statistically justified price",
+  "description": "Paid pricing-oracle agent — surveys Agent Store listings, estimates demand, and recommends a statistically justified price",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
@@ -26,10 +26,11 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@edycutjong/croo-core": "^0.1.5",
-    "simple-statistics": "^7.8.3",
     "@anthropic-ai/sdk": "^0.32.1",
-    "dotenv": "^16.4.5"
+    "@edycutjong/croo-core": "^0.1.5",
+    "dotenv": "^16.4.5",
+    "simple-statistics": "^7.8.3",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

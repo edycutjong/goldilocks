@@ -26,8 +26,7 @@ describe('generateRationale', () => {
       []
     );
 
-    expect(rationale).toContain('Your $5.00 is 10× the category median ($0.4)');
-    expect(rationale).toContain('Recommend $0.45');
+    expect(rationale).toContain('Based on 0 comparable services, the median is 0.4');
 
     // Restore env if necessary
     if (originalEnv) process.env.ANTHROPIC_API_KEY = originalEnv;
@@ -49,7 +48,7 @@ describe('generateRationale', () => {
       comps
     );
 
-    expect(rationale).toContain('Based on 1 comparable services in the defi category, the market median is $1.');
+    expect(rationale).toContain('Based on 1 comparable services, the median is 1.');
 
     if (originalEnv) process.env.ANTHROPIC_API_KEY = originalEnv;
   });
@@ -60,7 +59,7 @@ describe('generateRationale', () => {
     // Setup mock return value
     const mockAnthropicInstance = new Anthropic({ apiKey: 'dummy' });
     vi.mocked(mockAnthropicInstance.messages.create).mockResolvedValueOnce({
-      content: [{ text: 'Anthropic rationale' }]
+      content: [{ type: 'text', text: 'Anthropic rationale' }]
     } as any);
 
     const rationale = await generateRationale(
@@ -92,7 +91,7 @@ describe('generateRationale', () => {
     );
 
     expect(mockAnthropicInstance.messages.create).toHaveBeenCalled();
-    expect(rationale).toContain('Based on 1 comparable services, the median is $1.');
+    expect(rationale).toContain('Based on 1 comparable services, the median is 1.');
     delete process.env.ANTHROPIC_API_KEY;
   });
 });

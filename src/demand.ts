@@ -4,6 +4,9 @@ export interface DemandSignal {
   recommendedAdjustment: number;
 }
 
+// Epsilon-safe financial rounding utility
+export const roundCents = (val: number): number => Math.round((val + Number.EPSILON) * 100) / 100;
+
 /**
  * Calculates a demand signal (fill-rate) for a specific agent.
  * @param agentId The target agent ID to analyze.
@@ -38,7 +41,7 @@ export async function calculateDemand(agentId: string): Promise<DemandSignal> {
   }
 
   return {
-    fillRate: Number(fillRate.toFixed(2)),
+    fillRate: roundCents(fillRate),
     signal,
     recommendedAdjustment
   };
