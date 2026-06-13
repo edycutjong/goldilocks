@@ -1,0 +1,44 @@
+{
+  "name": "dorahacks-croo-goldilocks",
+  "version": "0.1.0",
+  "description": "Paid pricing-oracle agent \u2014 surveys Agent Store listings, estimates demand, and recommends a statistically justified price",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "audit": "npm audit --audit-level=high || true",
+    "ci": "npm run audit && npm run lint && npm run typecheck && npm run test"
+  },
+  "keywords": [
+    "croo",
+    "agent",
+    "a2a",
+    "human-in-the-loop",
+    "telegram"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@edycutjong/croo-core": "^0.1.5",
+    "simple-statistics": "^7.8.3",
+    "@anthropic-ai/sdk": "^0.32.1",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^3.2.6",
+    "eslint": "^9.0.0",
+    "license-checker": "^25.0.1",
+    "tsx": "^4.0.0",
+    "typescript": "^5.8.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^3.2.0"
+  }
+}
