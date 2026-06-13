@@ -83,4 +83,22 @@ describe('Goldilocks Provider', () => {
     expect(result.data.recommended).toBe(0.50);
     expect(result.data.demand).toBeNull();
   });
+
+  it('rejects the order and triggers a refund if no comparables are found', async () => {
+    const mockClient = { rejectOrder: vi.fn().mockResolvedValue(undefined) };
+    const handlers: any = await startGoldilocksProvider(mockClient, 'test_service');
+    
+    vi.mocked(agentStore.fetchComparables).mockResolvedValueOnce([] as any);
+
+    await expect(handlers.work({
+      id: 'o4',
+      requirement: {
+        description: 'Obscure task',
+        category: 'obscure_category',
+        currentPrice: 10.00
+      },
+    } as any)).rejects.toThrow('Order rejected due to insufficient market data (refund issued).');
+
+    expect(mockClient.rejectOrder).toHaveBeenCalledWith('o4', expect.stringContaining('INSUFFICIENT_MARKET_DATA'));
+  });
 });
