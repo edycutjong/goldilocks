@@ -5,7 +5,7 @@
 
   <br/>
 
-  [![Built for CROO Agent Hackathon](https://img.shields.io/badge/DoraHacks-CROO_Agent_Hackathon-8b5cf6?style=for-the-badge)](https://dorahacks.io/hackathon)
+  [![Built for CROO Agent Hackathon](https://img.shields.io/badge/DoraHacks-CROO_Agent_Hackathon-8b5cf6?style=for-the-badge)](https://dorahacks.io/hackathon/croo-hackathon)
 
   <br/>
 
@@ -20,7 +20,7 @@
 ## 📸 See it in Action
 
 <div align="center">
-  <img src="docs/assets/readme.png" alt="Goldilocks Demo" width="100%">
+  <img src="docs/see-in-action.png" alt="Goldilocks Demo" width="100%">
 </div>
 
 > **Hire Goldilocks → Get Data-Backed Price.** survey → estimate → recommend.
