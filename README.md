@@ -1,7 +1,9 @@
 <div align="center">
+  <img src="docs/icon-animated.svg" alt="Goldilocks Logo" width="120">
+
   <h1>Goldilocks 🧈</h1>
   <p><em>Paid pricing-oracle agent — surveys Agent Store listings, estimates demand, and recommends a statistically justified price</em></p>
-  <img src="docs/assets/readme-hero.png" alt="Goldilocks — Stop guessing what to charge — get a data-backed price." width="100%">
+  <img src="docs/readme-hero-animated.svg" alt="Goldilocks — Stop guessing what to charge — get a data-backed price." width="100%">
 
   <br/>
 
@@ -39,6 +41,35 @@ zero hires while the leaderboard fills up.
 - 📈 **Demand signal:** if you pass your own `agentId`, factors your fill-rate (orders vs negotiations).
 - 🎯 **Recommendation:** a "just right" price + a low/high band + the 3 comps that drove it + rationale.
 
+## 🌌 The Constellation — On-Chain A2A Graph
+
+Goldilocks is the constellation's **pricing oracle**: agents pay it on-chain to read the *live* Agent Store market and get a statistically grounded price. It only earns when it has real market data — if it can't find comparables it triggers an "honest-oracle" escrow refund rather than guess. Pricing intelligence that reads its own marketplace and refunds on low confidence is not something a flat REST API can do.
+
+```mermaid
+graph LR
+    User([Any Agent / User]) -->|hires for a price| GL[Goldilocks 🧈]
+    GL -->|surveys comparables| Store[(Agent Store)]
+    GL -.->|honest-oracle refund if no data| User
+    G[Gauntlet 🧤] -.->|certifies| GL
+    classDef hot fill:#F59E0B,stroke:#111,color:#111,font-weight:bold;
+    class GL hot;
+```
+
+- **Trust premium:** factors an agent's on-chain reputation (PTS) into the recommended price.
+- **Honest oracle:** zero comparables → escrow refunded, not a low-confidence guess charged to the buyer.
+
+## 🔗 Live Run Log — On-Chain Proof (Base Mainnet)
+
+Real CAP pricing orders Goldilocks fulfilled as a **provider**.
+
+**Total real CAP orders: _0_** · _last updated: 2026-06-__
+
+| # | Date | Counterparty (requester) | Amount (USDC) | Order ID | Tx (BaseScan) | Recommended price |
+|---|------|--------------------------|---------------|----------|---------------|-------------------|
+| 1 | _2026-06-__ | _agent_ | _0.00_ | `_ord_…_` | [0x…](https://basescan.org/tx/0x…) | _0.00 USDC_ |
+
+> Order IDs + pay tx are in the provider logs and the CROO dashboard. Honest-oracle refunds (no comps) show as `rejected`. Delete this note once populated.
+
 ## 🏗️ Architecture & Tech Stack
 
 | Layer | Technology |
@@ -63,8 +94,15 @@ zero hires while the leaderboard fills up.
 ### Installation
 1. Clone: `git clone https://github.com/edycutjong/goldilocks.git`
 2. Install: `npm install`
-3. Configure: `cp .env.example .env` and add your keys (CROO_SDK_KEY + ANTHROPIC_API_KEY)
+3. Configure: `cp .env.example .env.local` and add your keys (CROO_SDK_KEY + ANTHROPIC_API_KEY) — skip for mock mode
 4. Run: `npm run dev`
+
+### ▶️ Run it now — offline mock mode (no wallet, no USDC)
+```bash
+npm install
+CROO_MOCK=true npm run dev   # boots the pricing provider + health server, no on-chain calls
+```
+The rationale step works with **no API key** (deterministic template fallback); set `ANTHROPIC_API_KEY` to enable the Claude-written rationale.
 
 > **For Judges:** Skip account creation! Use test credentials if available or follow the SDK guide.
 
@@ -100,6 +138,14 @@ dorahacks-croo-goldilocks/
 ├── .env.example       # Environment template
 ├── .github/           # CI workflows
 └── README.md          # You are here
+```
+
+## 🚢 Deploy
+Containerized **web service** with a PaaS health check on `/health` (port `$PORT`, default 8080):
+```bash
+docker build -t goldilocks .
+docker run -p 8080:8080 --env-file .env.local goldilocks
+# Health: http://localhost:8080/health
 ```
 
 ## 📄 License
