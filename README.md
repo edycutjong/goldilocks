@@ -1,59 +1,109 @@
-# 🐻 Goldilocks — The price that's just right
-
-<p align="center">
+<div align="center">
+  <h1>Goldilocks 🧈</h1>
+  <p><em>Paid pricing-oracle agent — surveys Agent Store listings, estimates demand, and recommends a statistically justified price</em></p>
   <img src="docs/assets/readme-hero.png" alt="Goldilocks — Stop guessing what to charge — get a data-backed price." width="100%">
-</p>
 
-<p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-F59E0B?style=flat-square" alt="License"></a>
-  <a href="#"><img src="https://img.shields.io/badge/built_for-CROO_Agent_Hackathon-8B5CF6?style=flat-square" alt="Hackathon"></a>
-  <a href="#"><img src="https://img.shields.io/badge/CROO_SDK-ready-8B5CF6?style=flat-square" alt="Stack"></a>\n  <a href="#"><img src="https://img.shields.io/badge/Anthropic-ready-8B5CF6?style=flat-square" alt="Stack"></a>\n  <a href="#"><img src="https://img.shields.io/badge/Base_Mainnet-ready-8B5CF6?style=flat-square" alt="Stack"></a>\n</p>
+  <br/>
 
+  [![Built for CROO Agent Hackathon](https://img.shields.io/badge/DoraHacks-CROO_Agent_Hackathon-8b5cf6?style=for-the-badge)](https://dorahacks.io/hackathon)
 
-> **Track:** Developer Tooling Agents · **Network:** Base mainnet · **Settlement:** USDC via CAP
-> CROO Agent Hackathon 2026
+  <br/>
 
-Goldilocks is a **pricing oracle for agents**. Tell it what your service does and what you charge;
-it surveys comparable services on the CROO Agent Store, factors in demand signals, and recommends the
-price that's *just right* — not so cheap you serve at a loss, not so pricey nobody hires you — with a
-clear rationale and a confidence band.
+  ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+  ![Node.js](https://img.shields.io/badge/Node.js_20-339933?style=flat&logo=nodedotjs&logoColor=white)
+  [![CI](https://github.com/edycutjong/goldilocks/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/goldilocks/actions/workflows/ci.yml)
 
-**One line:** *stop guessing what to charge — get a data-backed price for your CROO agent.*
+</div>
 
-## Why it matters
+---
+
+## 📸 See it in Action
+
+<div align="center">
+  <img src="docs/assets/readme.png" alt="Goldilocks Demo" width="100%">
+</div>
+
+> **Hire Goldilocks → Get Data-Backed Price.** survey → estimate → recommend.
+
+---
+
+## 💡 The Problem & Solution
 Every builder in this hackathon has to set a price with zero market data, on day one, on mainnet.
 Price too low and you're swamped serving USDC-losing calls; price too high and your agent sits at
-zero hires while the leaderboard fills up. Goldilocks turns a blind guess into a recommendation
-grounded in what the market is actually paying.
+zero hires while the leaderboard fills up.
 
-## What it does (one narrow flow, deep)
-`hire Goldilocks (your service + current price) → market survey → {recommended, range, why}`
+**Goldilocks** solves this by turning a blind guess into a recommendation grounded in what the market is actually paying.
 
-- **Comparable survey:** pulls public Agent Store listings in your category (price, tags, description).
-- **Demand signal:** if you pass your own `agentId`, factors your fill-rate (orders vs negotiations).
-- **Recommendation:** a "just right" price + a low/high band + the 3 comps that drove it + rationale.
+**Key Features:**
+- ⚡ **Comparable survey:** pulls public Agent Store listings in your category (price, tags, description).
+- 📈 **Demand signal:** if you pass your own `agentId`, factors your fill-rate (orders vs negotiations).
+- 🎯 **Recommendation:** a "just right" price + a low/high band + the 3 comps that drove it + rationale.
 
-## CROO SDK methods used (7)
-`AgentClient` · `connectWebSocket` · `acceptNegotiation` · `getOrder` · `listOrders` (caller fill
-data) · `listNegotiations` (demand signal) · `deliverOrder` · `rejectOrder`. Plus the public Agent
-Store listings API for comparables.
+## 🏗️ Architecture & Tech Stack
 
-## Quick start
+| Layer | Technology |
+|---|---|
+| **Runtime** | Node.js 20, TypeScript |
+| **Agent Core** | @edycutjong/croo-core |
+| **Reasoning** | Anthropic Claude 3.5 Sonnet |
+| **Math** | simple-statistics |
+| **Validation** | Zod |
+
+## 🏆 Sponsor Tracks Targeted
+- **Developer Tooling Agents**
+- **Base Mainnet**
+- **Anthropic**
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js ≥ 20
+- npm
+
+### Installation
+1. Clone: `git clone https://github.com/edycutjong/goldilocks.git`
+2. Install: `npm install`
+3. Configure: `cp .env.example .env` and add your keys (CROO_SDK_KEY + ANTHROPIC_API_KEY)
+4. Run: `npm run dev`
+
+> **For Judges:** Skip account creation! Use test credentials if available or follow the SDK guide.
+
+## 🧪 Testing & CI
+
+**Quality Gates Pipeline:** Quality → Security → Build
+
 ```bash
-cp .env.example .env       # CROO_SDK_KEY (+ ANTHROPIC_API_KEY for rationale)
-npm install && npm test    # 100+ tests
-npm run dev                # provider loop
+# ── Code Quality ────────────────────────────
+npm run lint          # ESLint
+npm run typecheck     # TypeScript check
+npm run test          # Run tests
+npm run test:coverage # Coverage report
+npm run ci            # Full quality gate
+
+# ── Security ────────────────────────────────
+make security-scan    # npm audit + license check
 ```
 
-## Composes with the constellation
-Every other agent (and external builders) hires Goldilocks once to price itself → easy, broad buyer
-base. **Gauntlet** certifies it; **Maestro** can consult it to pick the cheapest qualified worker.
-See `../dorahacks-croo-core/PORTFOLIO.md`.
+| Layer | Tool | Status |
+|---|---|---|
+| Code Quality | ESLint + TypeScript | ✅ |
+| Unit Testing | Vitest | ✅ |
+| Security (SAST) | CodeQL | ✅ |
+| Security (SCA) | Dependabot + npm audit | ✅ |
 
-## Honest limitation
-This is an **inaugural** event — the market is thin and young, so early recommendations lean on a
-small comp set and public-listing prices (not full network-wide order history, which isn't publicly
-queryable). Goldilocks reports its confidence and the comp count so you know how much data backs the
-number; it gets sharper as the Agent Store grows.
+## 📁 Project Structure
+```
+dorahacks-croo-goldilocks/
+├── docs/              # README assets (hero, screenshots)
+├── src/               # Core agent logic
+├── __tests__/         # Vitest test suite
+├── .env.example       # Environment template
+├── .github/           # CI workflows
+└── README.md          # You are here
+```
 
-— Thanks for reviewing. 🙏
+## 📄 License
+[MIT](LICENSE) © 2026 Edy Cu
+
+## 🙏 Acknowledgments
+Built for CROO Agent Hackathon 2026. Thank you to the sponsors for the APIs and tools.

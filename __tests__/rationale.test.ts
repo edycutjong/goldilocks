@@ -94,4 +94,57 @@ describe('generateRationale', () => {
     expect(rationale).toContain('Based on 1 comparable services, the median is 1.');
     delete process.env.ANTHROPIC_API_KEY;
   });
+
+  it('should handle non-Error exceptions in API call', async () => {
+    process.env.ANTHROPIC_API_KEY = 'test_key';
+    const mockAnthropicInstance = new Anthropic({ apiKey: 'dummy' });
+    vi.mocked(mockAnthropicInstance.messages.create).mockRejectedValueOnce('String error');
+
+    const rationale = await generateRationale(
+      2.00,
+      undefined, // test category fallback
+      { median: 1.00, low: 0.80, high: 1.20, confidence: 0.1 },
+      null,
+      [{ service: 'A', price: 1.0 }]
+    );
+
+    expect(rationale).toContain('Based on 1 comparable services, the median is 1.');
+    delete process.env.ANTHROPIC_API_KEY;
+  });
+
+  it('should handle response with no text block', async () => {
+    process.env.ANTHROPIC_API_KEY = 'test_key';
+    const mockAnthropicInstance = new Anthropic({ apiKey: 'dummy' });
+    vi.mocked(mockAnthropicInstance.messages.create).mockResolvedValueOnce({
+      content: [{ type: 'image', source: {} as any }]
+    } as any);
+
+    const rationale = await generateRationale(
+      2.00,
+      'defi',
+      { median: 1.00, low: 0.80, high: 1.20, confidence: 0.1 },
+      null,
+      [{ service: 'A', price: 1.0 }]
+    );
+
+    expect(rationale).toContain('Based on 1 comparable services, the median is 1.');
+    delete process.env.ANTHROPIC_API_KEY;
+  });
+
+  it('queues tasks when concurrent calls exceed max', async () => {
+    process.env.ANTHROPIC_API_KEY = 'test_key';
+    const mockAnthropicInstance = new Anthropic({ apiKey: 'dummy' });
+    
+    vi.mocked(mockAnthropicInstance.messages.create).mockImplementation(async () => {
+      return new Promise(r => {
+        setTimeout(() => r({ content: [{ type: 'text', text: 'Anthropic' }] } as any), 10);
+      });
+    });
+
+    const calls = Array(10).fill(0).map(() => generateRationale(2, 'defi', { median: 1, low: 0, high: 2, confidence: 0 }, null, []));
+    
+    const results = await Promise.all(calls);
+    expect(results).toHaveLength(10);
+    delete process.env.ANTHROPIC_API_KEY;
+  });
 });

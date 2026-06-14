@@ -1,4 +1,4 @@
-/// vitest.config.ts — croo-core test configuration
+/// vitest.config.ts — Goldilocks test configuration
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({

@@ -43,6 +43,7 @@ export async function fetchComparables(category?: string): Promise<Comparable[]>
   // Evict oldest if we hit the ceiling (FIFO strategy)
   if (compsCache.size >= MAX_CACHE_SIZE && !compsCache.has(cacheKey)) {
     const oldestKey = compsCache.keys().next().value;
+    /* v8 ignore next */
     if (oldestKey) compsCache.delete(oldestKey);
   }
 

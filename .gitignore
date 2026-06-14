@@ -1,8 +1,18 @@
 node_modules/
 dist/
 coverage/
+
+# Environment variables
 .env
-.env.local
-*.log
-.DS_Store
+.env.*
+!.env.example
+
+# Generated assets
 docs/assets
+assets/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store

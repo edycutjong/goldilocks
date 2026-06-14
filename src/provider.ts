@@ -17,7 +17,7 @@ export const GoldilocksInputSchema = z.object({
 export type GoldilocksInput = z.infer<typeof GoldilocksInputSchema>;
 
 type CrooEvent = { service_id?: string; buyerId?: string };
-type CrooOrder = { id: string; requirement: unknown };
+type CrooOrder = { orderId: string; negotiationId: string };
 
 // 2. Idempotency Cache (Spatial bounded) to prevent double-billing on WS reconnects
 const processedOrders = new Set<string>();
@@ -36,22 +36,26 @@ export async function startGoldilocksProvider(client: unknown, serviceId: string
       const order = rawOrder as CrooOrder;
       
       // Idempotency Check
-      if (processedOrders.has(order.id)) {
-        console.warn(`[Goldilocks] ⚠️ Idempotency hit: Order ${order.id} already processed. Ignoring replay.`);
+      if (processedOrders.has(order.orderId)) {
+        console.warn(`[Goldilocks] ⚠️ Idempotency hit: Order ${order.orderId} already processed. Ignoring replay.`);
         throw new Error("Order already processed");
       }
       
       // Enforce spatial bound on idempotency cache (FIFO)
       if (processedOrders.size >= MAX_IDEMPOTENCY_KEYS) {
         const oldest = processedOrders.values().next().value;
+        /* v8 ignore next */
         if (oldest) processedOrders.delete(oldest);
       }
-      processedOrders.add(order.id);
+      processedOrders.add(order.orderId);
 
       const startTime = performance.now();
-      console.log(`[Goldilocks] 💳 Order ${order.id} paid. Generating pricing recommendation...`);
+      console.log(`[Goldilocks] 💳 Order ${order.orderId} paid. Generating pricing recommendation...`);
 
-      const parsed = GoldilocksInputSchema.safeParse(order.requirement);
+      // The buyer's payload lives on the negotiation as a JSON `requirements`
+      // string — the Order itself does not carry it. Fetch and parse it.
+      const requirement = await loadRequirement(client, order);
+      const parsed = GoldilocksInputSchema.safeParse(requirement);
       if (!parsed.success) {
         throw new Error(`Invalid input payload: ${parsed.error.message}`);
       }
@@ -68,7 +72,7 @@ export async function startGoldilocksProvider(client: unknown, serviceId: string
         console.warn(`[Goldilocks] 🛡️ Honest Oracle triggered. Zero comps found for category "${input.category || 'unknown'}". Requesting refund.`);
         // Actively trigger the CAPVault smart contract refund
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (client as any).rejectOrder(order.id, "INSUFFICIENT_MARKET_DATA: Cannot provide a confident recommendation. Escrow refunded.");
+        await (client as any).rejectOrder(order.orderId, "INSUFFICIENT_MARKET_DATA: Cannot provide a confident recommendation. Escrow refunded.");
         throw new Error("Order rejected due to insufficient market data (refund issued).");
       }
 
@@ -83,7 +87,9 @@ export async function startGoldilocksProvider(client: unknown, serviceId: string
         
         // 2. CROO Merit (PTS) Trust Premium Integration
         // In production, this reads the ERC-8004 DID / PTS score from Base L2
-        const mockPtsScore = input.agentId === "agent_demo_overpriced" ? 45 : 92;
+        let mockPtsScore = 75; // Default average
+        if (input.agentId === "agent_demo_overpriced") mockPtsScore = 45;
+        else if (input.agentId === "elite_agent") mockPtsScore = 92;
         
         if (mockPtsScore >= 90) trustPremium = 1.15; // +15% premium for elite agents
         else if (mockPtsScore < 50) trustPremium = 0.85; // -15% discount to build volume
@@ -114,7 +120,7 @@ export async function startGoldilocksProvider(client: unknown, serviceId: string
         console.log(`[Goldilocks] 🎨 Generating and uploading Certified Badge SVG...`);
         // Buffer is a Node.js global; upload heavy payloads via the SDK
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        badgeFileKey = await (client as any).uploadFile(`goldilocks-badge-${order.id}.svg`, Buffer.from(svgBadge, 'utf-8'));
+        badgeFileKey = await (client as any).uploadFile(`goldilocks-badge-${order.orderId}.svg`, Buffer.from(svgBadge, 'utf-8'));
       } catch (uploadErr) {
         console.warn(`[Goldilocks] ⚠️ Badge upload failed, continuing with Schema only:`, uploadErr);
       }
@@ -140,4 +146,26 @@ export async function startGoldilocksProvider(client: unknown, serviceId: string
       };
     }
   });
+}
+
+/**
+ * Load and parse the buyer's requirement from the order's negotiation.
+ * The Order does not carry the requirement — it lives on the negotiation as a
+ * JSON `requirements` string (see croo-core `hire()`).
+ */
+async function loadRequirement(client: unknown, order: CrooOrder): Promise<unknown> {
+  let raw: string;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const negotiation = await (client as any).getNegotiation(order.negotiationId);
+    raw = negotiation?.requirements ?? '';
+  } catch (err) {
+    throw new Error(`Failed to load negotiation ${order.negotiationId}: ${String(err)}`);
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw new Error('Invalid input payload: requirements is not valid JSON');
+  }
 }
