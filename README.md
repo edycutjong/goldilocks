@@ -40,6 +40,8 @@ zero hires while the leaderboard fills up.
 - ⚡ **Comparable survey:** pulls public Agent Store listings in your category (price, tags, description).
 - 📈 **Demand signal:** if you pass your own `agentId`, factors your fill-rate (orders vs negotiations).
 - 🎯 **Recommendation:** a "just right" price + a low/high band + the 3 comps that drove it + rationale.
+- 🔄 **Active State Recovery:** Automatically recovers and processes paid pricing evaluation requests upon startup.
+- ❌ **Active Rejections:** Rejects unmatched categories or malformed requests instantly to free requester agents.
 
 ## 🌌 The Constellation — On-Chain A2A Graph
 
