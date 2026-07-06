@@ -188,4 +188,15 @@ describe('Goldilocks Provider', () => {
     const res = await handlers.work(makeOrder({ orderId: 'flood_0' }) as any);
     expect(res).toBeDefined();
   });
+
+  it('handles empty requirements field gracefully', async () => {
+    const client = {
+      getNegotiation: vi.fn().mockResolvedValue({
+        negotiationId: 'n1',
+        requirements: null,
+      })
+    };
+    const handlers: any = await startGoldilocksProvider(client, 'test_service');
+    await expect(handlers.work(makeOrder({ orderId: 'o_emptyreq' }) as any)).rejects.toThrow('Invalid input payload');
+  });
 });

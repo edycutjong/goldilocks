@@ -26,6 +26,8 @@ const MAX_IDEMPOTENCY_KEYS = 500;
 export async function startGoldilocksProvider(client: unknown, serviceId: string): Promise<unknown> {
   // @ts-expect-error - external SDK type mismatch
   return runProvider(client, {
+    enableStateRecovery: true,
+    payoutAddress: process.env.GOLDILOCKS_PAYOUT_ADDRESS,
     serviceMatch: (event: unknown) => {
       const e = event as CrooEvent;
       if (e?.service_id !== serviceId) return false;
