@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi } from 'vitest';
-import { startGoldilocksProvider } from '../src/provider';
+import { startGoldilocksProvider, normalizeGoldilocksInput } from '../src/provider';
 import * as crooCore from '@edycutjong/croo-core';
 import * as agentStore from '../src/agentStore';
 import * as band from '../src/band';
@@ -46,11 +46,20 @@ describe('Goldilocks Provider', () => {
     expect(handlers.serviceMatch({ service_id: 'other' } as any)).toBe(false);
   });
 
-  it('throws error if currentPrice is missing', async () => {
-    const client = makeClient({ description: 'test' });
-    const handlers: any = await startGoldilocksProvider(client, 'test_service');
+  it('normalizes the dashboard free-text {text} payload into a valid input', () => {
+    // {text} with an embedded price → description + parsed currentPrice, no category
+    const a: any = normalizeGoldilocksInput({ text: 'Price my research agent, currently at $0.25' });
+    expect(a.description).toContain('research agent');
+    expect(a.currentPrice).toBe(0.25);
+    expect(a.category).toBeUndefined();
 
-    await expect(handlers.work(makeOrder({ orderId: 'o_missing' }) as any)).rejects.toThrow('Invalid input payload');
+    // missing currentPrice now defaults (so a dashboard hire completes instead of failing)
+    const b: any = normalizeGoldilocksInput({ description: 'test' });
+    expect(b.currentPrice).toBe(0.10);
+
+    // well-formed structured input passes through untouched
+    const wellFormed = { description: 'x', currentPrice: 3.5, category: 'research', agentId: 'a1' };
+    expect(normalizeGoldilocksInput(wellFormed)).toBe(wellFormed);
   });
 
   it('throws if the negotiation requirements are not valid JSON', async () => {

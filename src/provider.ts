@@ -16,6 +16,39 @@ export const GoldilocksInputSchema = z.object({
 
 export type GoldilocksInput = z.infer<typeof GoldilocksInputSchema>;
 
+/**
+ * Normalize the buyer's requirement into a valid GoldilocksInput. Accepts the
+ * CROO dashboard's free-text payload ({text}) and partial objects: maps the text
+ * to `description`, pulls a `$0.xx` price out of it when present (default 0.10),
+ * and omits `category` so `fetchComparables()` returns the full comp set (a
+ * bogus category would otherwise trip the Honest-Oracle refund). Well-formed
+ * structured inputs pass through untouched.
+ */
+export function normalizeGoldilocksInput(raw: unknown): unknown {
+  if (!raw || typeof raw !== 'object') return raw;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const r = raw as Record<string, any>;
+  if (typeof r.description === 'string' && typeof r.currentPrice === 'number') return r;
+
+  const text =
+    typeof r.text === 'string' ? r.text
+    : typeof r.description === 'string' ? r.description
+    : typeof r.prompt === 'string' ? r.prompt
+    : '';
+  const priceMatch = text.match(/\$?\s*([0-9]+(?:\.[0-9]+)?)/);
+  const currentPrice =
+    typeof r.currentPrice === 'number' ? r.currentPrice
+    : priceMatch ? parseFloat(priceMatch[1])
+    : 0.10;
+
+  return {
+    description: (text || 'Pricing recommendation request').slice(0, 2000),
+    currentPrice,
+    ...(typeof r.category === 'string' && r.category ? { category: r.category } : {}),
+    ...(typeof r.agentId === 'string' && r.agentId ? { agentId: r.agentId } : {}),
+  };
+}
+
 type CrooEvent = { service_id?: string; buyerId?: string };
 type CrooOrder = { orderId: string; negotiationId: string };
 
@@ -57,7 +90,7 @@ export async function startGoldilocksProvider(client: unknown, serviceId: string
       // The buyer's payload lives on the negotiation as a JSON `requirements`
       // string — the Order itself does not carry it. Fetch and parse it.
       const requirement = await loadRequirement(client, order);
-      const parsed = GoldilocksInputSchema.safeParse(requirement);
+      const parsed = GoldilocksInputSchema.safeParse(normalizeGoldilocksInput(requirement));
       if (!parsed.success) {
         throw new Error(`Invalid input payload: ${parsed.error.message}`);
       }
