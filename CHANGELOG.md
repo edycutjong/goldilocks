@@ -1,3 +1,10 @@
+## [0.2.3](https://github.com/edycutjong/goldilocks/compare/v0.2.2...v0.2.3) (2026-07-07)
+
+
+### Bug Fixes
+
+* normalize free-text requirement to valid pricing input + use current model claude-haiku-4-5 ([b6df2bc](https://github.com/edycutjong/goldilocks/commit/b6df2bcb4f1abd3469880cb516aaeff4e07f68be))
+
 ## [0.2.2](https://github.com/edycutjong/goldilocks/compare/v0.2.1...v0.2.2) (2026-07-07)
 
 
