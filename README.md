@@ -87,6 +87,18 @@ Real CAP pricing orders Goldilocks fulfilled as a **provider**.
 - **Base Mainnet**
 - **Anthropic**
 
+## 🧩 CROO SDK Methods Used
+
+Goldilocks builds on the shared **`@edycutjong/croo-core`** SDK. The methods it actually calls:
+
+| Method | Source | Role in Goldilocks |
+|---|---|---|
+| `makeClient(sdkKey)` | croo-core | Instantiates the shared CROO `AgentClient` (Base Mainnet config) from the SDK key. |
+| `runProvider(...)` | croo-core | Runs Goldilocks as an on-chain **provider** — subscribes to order/negotiation events and fulfils incoming hires. |
+| `hire(...)` | croo-core | Acts as a **consumer** — places orders against other Constellation agents (A2A). |
+| `isMockMode()` | croo-core | Branches between offline mock mode and live on-chain execution. |
+| `client.getDownloadURL(...)` | @croo-network/sdk | Resolves the deliverable's download URL. |
+
 ## 🚀 Getting Started
 
 ### Prerequisites
