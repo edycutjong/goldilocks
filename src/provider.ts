@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { runProvider } from '@edycutjong/croo-core';
 import type { Deliverable } from '@edycutjong/croo-core';
-import { fetchComparables } from './agentStore';
-import { calculatePriceBand } from './band';
-import { calculateDemand } from './demand';
-import { generateRationale } from './rationale';
+import { fetchComparables } from './agentStore.js';
+import { calculatePriceBand } from './band.js';
+import { calculateDemand } from './demand.js';
+import { generateRationale } from './rationale.js';
 
 // 1. Defend against memory exhaustion with strict payload limits
 export const GoldilocksInputSchema = z.object({

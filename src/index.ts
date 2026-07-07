@@ -1,4 +1,4 @@
-import { startGoldilocksProvider } from './provider';
+import { startGoldilocksProvider } from './provider.js';
 import { makeClient, isMockMode } from '@edycutjong/croo-core';
 import * as http from 'http';
 

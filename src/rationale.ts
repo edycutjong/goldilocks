@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
-import type { PriceBand } from './band';
-import type { DemandSignal } from './demand';
-import type { Comparable } from './agentStore';
+import type { PriceBand } from './band.js';
+import type { DemandSignal } from './demand.js';
+import type { Comparable } from './agentStore.js';
 
 // Native concurrency semaphore to protect LLM rate limits
 class Semaphore {
