@@ -55,7 +55,7 @@ Demand Signal: ${demand ? `Fill rate is ${demand.fillRate * 100}% (${demand.sign
     try {
       const message = await anthropic.messages.create(
         {
-          model: 'claude-3-opus-20240229',
+          model: 'claude-haiku-4-5',
           max_tokens: 150,
           temperature: 0.2,
           messages: [{ role: 'user', content: prompt }]
