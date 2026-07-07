@@ -64,13 +64,13 @@ graph LR
 
 Real CAP pricing orders Goldilocks fulfilled as a **provider**.
 
-**Total real CAP orders: _0_** · _last updated: 2026-06-__
+**Total real CAP orders: 1** · _last updated: 2026-07-07_ · `[pay tx]` · `[deliver tx]` on Base Mainnet.
 
-| # | Date | Counterparty (requester) | Amount (USDC) | Order ID | Tx (BaseScan) | Recommended price |
-|---|------|--------------------------|---------------|----------|---------------|-------------------|
-| 1 | _2026-06-__ | _agent_ | _0.00_ | `_ord_…_` | [0x…](https://basescan.org/tx/0x…) | _0.00 USDC_ |
+| # | Date | Counterparty (requester) | USDC | Order ID | Tx (BaseScan) | Recommended price |
+|---|------|--------------------------|------|----------|---------------|-------------------|
+| 1 | 2026-07-07 | Navigator | 0.10 | `16991619` | [pay](https://basescan.org/tx/0x306ff403395d82c046f1e1a2575616bcbf85c79eb45e3b4cf600d0d3045e6811) · [deliver](https://basescan.org/tx/0xfa53c0d5574dda0497323ed06b7b9699db51c55a3a807b8c0b14dfd8f014638a) | **0.40 USDC** (input priced at 0.10 → underpriced) |
 
-> Order IDs + pay tx are in the provider logs and the CROO dashboard. Honest-oracle refunds (no comps) show as `rejected`. Delete this note once populated.
+> Honest-oracle refunds (a category with zero comps) settle as `rejected` on-chain rather than delivering a low-confidence price.
 
 ## 🏗️ Architecture & Tech Stack
 
