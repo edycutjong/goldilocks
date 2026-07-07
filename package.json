@@ -1,6 +1,6 @@
 {
   "name": "dorahacks-croo-goldilocks",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Paid pricing-oracle agent — surveys Agent Store listings, estimates demand, and recommends a statistically justified price",
   "type": "module",
   "main": "dist/index.js",
