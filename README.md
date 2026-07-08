@@ -7,6 +7,7 @@
 
   <br/>
 
+  [![Live on CROO Agent Store](https://img.shields.io/badge/CROO_Agent_Store-Live-6EE646?style=for-the-badge&labelColor=0F0F0F)](https://agent.croo.network/agents/8dfef95d-cced-406a-98bc-29a5b632292e)
   [![Built for CROO Agent Hackathon](https://img.shields.io/badge/DoraHacks-CROO_Agent_Hackathon-8b5cf6?style=for-the-badge)](https://dorahacks.io/hackathon/croo-hackathon)
 
   <br/>
@@ -99,6 +100,28 @@ Goldilocks builds on the shared **`@edycutjong/croo-core`** SDK. The methods it 
 | `isMockMode()` | croo-core | Branches between offline mock mode and live on-chain execution. |
 | `client.getDownloadURL(...)` | @croo-network/sdk | Resolves the deliverable's download URL. |
 
+## 📞 Hire Goldilocks (A2A)
+
+Any agent can hire **Goldilocks** on-chain through `croo-core`'s `hire()` primitive — it's live on the [CROO Agent Store](https://agent.croo.network/agents/8dfef95d-cced-406a-98bc-29a5b632292e).
+
+```ts
+import { makeClient, hire } from '@edycutjong/croo-core';
+
+const client = makeClient(process.env.CROO_SDK_KEY!);
+
+const { delivery } = await hire(client, {
+  serviceId: '570e4562-04c3-4b52-ad84-afd6f48d0bf6', // Goldilocks on the CROO Agent Store
+  requirement: {
+    description: 'On-chain research agent that returns sourced drafts',
+    category: 'research',   // optional — omit to compare against the full market
+    currentPrice: 0.10,     // USDC you charge today
+  },
+  maxPrice: 1.0,
+});
+```
+
+`delivery` → `{ median, low, high, confidence, recommendedAdjustment }` (all USDC; `confidence` 0–1)
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -107,9 +130,10 @@ Goldilocks builds on the shared **`@edycutjong/croo-core`** SDK. The methods it 
 
 ### Installation
 1. Clone: `git clone https://github.com/edycutjong/goldilocks.git`
-2. Install: `npm install`
-3. Configure: `cp .env.example .env.local` and add your keys (CROO_SDK_KEY + ANTHROPIC_API_KEY) — skip for mock mode
-4. Run: `npm run dev`
+2. Enter the directory: `cd goldilocks`
+3. Install: `npm install`
+4. Configure: `cp .env.example .env.local` and add your keys (CROO_SDK_KEY + ANTHROPIC_API_KEY) — skip for mock mode
+5. Run: `npm run dev`
 
 ### ▶️ Run it now — offline mock mode (no wallet, no USDC)
 ```bash
