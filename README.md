@@ -1,7 +1,7 @@
 <div align="center">
   <img src="docs/icon-animated.svg" alt="Goldilocks Logo" width="120">
 
-  <h1>Goldilocks 🧈</h1>
+  <h1>Goldilocks 🎯</h1>
   <p><em>Paid pricing-oracle agent — surveys Agent Store listings, estimates demand, and recommends a statistically justified price</em></p>
   <img src="docs/readme-hero-animated.svg" alt="Goldilocks — Stop guessing what to charge — get a data-backed price." width="100%">
 
@@ -50,7 +50,7 @@ Goldilocks is the constellation's **pricing oracle**: agents pay it on-chain to 
 
 ```mermaid
 graph LR
-    User([Any Agent / User]) -->|hires for a price| GL[Goldilocks 🧈]
+    User([Any Agent / User]) -->|hires for a price| GL[Goldilocks 🎯]
     GL -->|surveys comparables| Store[(Agent Store)]
     GL -.->|honest-oracle refund if no data| User
     G[Gauntlet 🧤] -.->|certifies| GL
