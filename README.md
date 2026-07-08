@@ -169,7 +169,7 @@ make security-scan    # npm audit + license check
 
 ## 📁 Project Structure
 ```
-dorahacks-croo-goldilocks/
+goldilocks/
 ├── docs/              # README assets (hero, screenshots)
 ├── src/               # Core agent logic
 ├── __tests__/         # Vitest test suite
