@@ -1,3 +1,10 @@
+## [0.3.1](https://github.com/edycutjong/goldilocks/compare/v0.3.0...v0.3.1) (2026-07-08)
+
+
+### Bug Fixes
+
+* **icon:** make animated icon render on GitHub (SMIL + real transform) ([13c0b88](https://github.com/edycutjong/goldilocks/commit/13c0b88035d8a610ac46e09f23460d0d1ce5496e))
+
 # [0.3.0](https://github.com/edycutjong/goldilocks/compare/v0.2.4...v0.3.0) (2026-07-08)
 
 
