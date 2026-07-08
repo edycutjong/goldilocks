@@ -1,3 +1,10 @@
+# [0.3.0](https://github.com/edycutjong/goldilocks/compare/v0.2.4...v0.3.0) (2026-07-08)
+
+
+### Features
+
+* **icon:** gauge glyph + Agent Store badge, hire example, community files ([8cb05cd](https://github.com/edycutjong/goldilocks/commit/8cb05cd4971ce7b170f4d9dc075cacc26ca78459))
+
 ## [0.2.4](https://github.com/edycutjong/goldilocks/compare/v0.2.3...v0.2.4) (2026-07-07)
 
 
