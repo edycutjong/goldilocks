@@ -1,3 +1,10 @@
+## [0.3.2](https://github.com/edycutjong/goldilocks/compare/v0.3.1...v0.3.2) (2026-08-22)
+
+
+### Bug Fixes
+
+* **deps:** resolve 1 dependency vulnerabilities via lockfile ([41f3ee8](https://github.com/edycutjong/goldilocks/commit/41f3ee8e0b7cceac3bd6adcc4c68fa8f90fedd38))
+
 ## [0.3.1](https://github.com/edycutjong/goldilocks/compare/v0.3.0...v0.3.1) (2026-07-08)
 
 
